@@ -19,15 +19,13 @@ public class ApiExtension implements BeforeEachCallback {
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        // 1. Получаем токен (один раз за все тесты)
+        // Получение токена (один раз за все тесты)
         if (requestSpec == null) {
             requestSpec = buildRequestSpec();
         }
 
-        // 2. Создаем Injector с нашим модулем (передаем туда requestSpec)
+        // Создание Injector (передаем requestSpec)
         Injector injector = Guice.createInjector(new ApiModule(requestSpec));
-
-        // 3. Внедряем зависимости в тестовый класс
         injector.injectMembers(context.getRequiredTestInstance());
     }
 
@@ -43,7 +41,7 @@ public class ApiExtension implements BeforeEachCallback {
             throw new IllegalStateException("Не переданы api.url, login или password!");
         }
 
-        // Получаем токен
+        // Получение токена
         LoginResponse loginResponse = given()
                 .baseUri(baseUrl)
                 .contentType("application/json")
@@ -55,7 +53,7 @@ public class ApiExtension implements BeforeEachCallback {
                 .extract()
                 .as(LoginResponse.class);
 
-        // Собираем спецификацию
+        // Спецификация
         return new RequestSpecBuilder()
                 .setBaseUri(baseUrl)
                 .setContentType("application/json")
